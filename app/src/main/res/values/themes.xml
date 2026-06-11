@@ -6,4 +6,35 @@
     </style>
 
     <style name="Theme.GestionnaireNotes" parent="Base.Theme.GestionnaireNotes" />
+
+    <!-- LES STYLES AJOUTÉS -->
+
+    <style name="Title1">
+        <item name="android:textSize">45sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Title2">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Title3">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Title4">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Text1">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Text2">
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>
