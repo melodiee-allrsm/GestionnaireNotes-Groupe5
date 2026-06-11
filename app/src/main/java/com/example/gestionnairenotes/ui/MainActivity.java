@@ -18,6 +18,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+import android.widget.LinearLayout;
+
 public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNoteClickListener {
 
     // Clé partagée pour passer une note via Intent
@@ -35,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private SearchView searchView;
     private Button btnFavoris;
     private FloatingActionButton fab;
+
+    private LinearLayout layoutPalette;
+    private boolean isPaletteVisible = false;
 
     private boolean showFavorisOnly = false;
 
@@ -90,10 +95,21 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
         });
         btnFavoris.setAlpha(0.5f); // inactif par défaut
 
-        // FAB → écran de création
+        layoutPalette = findViewById(R.id.layoutPalette);
+
+        findViewById(R.id.colorVert).setOnClickListener(v -> ouvrirCreation("#219653"));
+        findViewById(R.id.colorRouge).setOnClickListener(v -> ouvrirCreation("#EB5757"));
+        findViewById(R.id.colorBleu).setOnClickListener(v -> ouvrirCreation("#2F80ED"));
+        findViewById(R.id.colorJaune).setOnClickListener(v -> ouvrirCreation("#F2C94C"));
+        findViewById(R.id.colorOrange).setOnClickListener(v -> ouvrirCreation("#F2994A"));
+        findViewById(R.id.colorGris).setOnClickListener(v -> ouvrirCreation("#828282"));
+
         fab.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CreateNoteActivity.class);
-            startActivityForResult(intent, REQUEST_CREATE_NOTE);
+            if (isPaletteVisible) {
+                cacherPalette();
+            } else {
+                afficherPalette();
+            }
         });
     }
 
@@ -152,5 +168,26 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
             tvEmpty.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void afficherPalette() {
+        layoutPalette.setVisibility(View.VISIBLE);
+        layoutPalette.setAlpha(0f);
+        layoutPalette.animate().alpha(1f).setDuration(300).start();
+        isPaletteVisible = true;
+    }
+
+    private void cacherPalette() {
+        layoutPalette.animate().alpha(0f).setDuration(300).withEndAction(() ->
+                layoutPalette.setVisibility(View.GONE)
+        ).start();
+        isPaletteVisible = false;
+    }
+
+    private void ouvrirCreation(String couleur) {
+        cacherPalette();
+        Intent intent = new Intent(this, CreateNoteActivity.class);
+        intent.putExtra("COULEUR", couleur);
+        startActivityForResult(intent, REQUEST_CREATE_NOTE);
     }
 }
