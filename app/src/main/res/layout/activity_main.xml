@@ -69,6 +69,34 @@
             android:textColor="#9E9E9E"
             android:visibility="gone"/>
 
+<!-- Barre de recherche en temps réel par titre.
+     Le TextWatcher dans MainActivity écoutera les changements et filtrera la liste. -->
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Rechercher par titre..."
+    android:layout_margin="8dp"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etRecherche"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:imeOptions="actionSearch"/>
+</com.google.android.material.textfield.TextInputLayout>
+
+<!-- Bouton Favoris : quand il est actif, on n'affiche que les notes favorites.
+     On change son icône / texte selon l'état pour que l'utilisateur comprenne
+     dans quel mode il se trouve. -->
+<Button
+    android:id="@+id/btnFavoris"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:text="★ Favoris"
+    android:backgroundTint="#BDBDBD"
+    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         <!-- Liste des notes -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
