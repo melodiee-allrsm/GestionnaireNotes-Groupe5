@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <activity android:name=".ui.CreateNoteActivity"/>
-    <activity android:name=".ui.EditNoteActivity" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,15 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GestionnaireNotes">
+
+        <!-- Activité principale : liste des notes + recherche + favoris -->
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Écran de création d'une nouvelle note -->
+        <activity android:name=".ui.CreateNoteActivity" />
+
+        <!-- Écran de modification d'une note existante -->
+        <activity android:name=".ui.EditNoteActivity" />
+
     </application>
 
 </manifest>

@@ -28,75 +28,42 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Barre de recherche + bouton favoris -->
+        <!-- Zone de recherche textuelle + bouton favoris -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:gravity="center_vertical">
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutRecherche"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:iconifiedByDefault="false"
-                app:queryHint="Rechercher une note..." />
+                android:hint="Rechercher par titre..."
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRecherche"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Bouton Favoris : quand il est actif, on n'affiche que les notes favorites -->
             <Button
                 android:id="@+id/btnFavoris"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="★"
-                android:textSize="18sp"
-                android:backgroundTint="#FFC107"
-                android:textColor="#FFFFFF"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"/>
+                android:text="★ Favoris"
+                android:backgroundTint="#BDBDBD"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
         </LinearLayout>
-
-        <!-- État vide -->
-        <TextView
-            android:id="@+id/tvEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="32dp"
-            android:text="Aucune note"
-            android:textSize="16sp"
-            android:textColor="#9E9E9E"
-            android:visibility="gone"/>
-
-<!-- Barre de recherche en temps réel par titre.
-     Le TextWatcher dans MainActivity écoutera les changements et filtrera la liste. -->
-<com.google.android.material.textfield.TextInputLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="Rechercher par titre..."
-    android:layout_margin="8dp"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/etRecherche"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:imeOptions="actionSearch"/>
-</com.google.android.material.textfield.TextInputLayout>
-
-<!-- Bouton Favoris : quand il est actif, on n'affiche que les notes favorites.
-     On change son icône / texte selon l'état pour que l'utilisateur comprenne
-     dans quel mode il se trouve. -->
-<Button
-    android:id="@+id/btnFavoris"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:text="★ Favoris"
-    android:backgroundTint="#BDBDBD"
-    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         <!-- Liste des notes -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

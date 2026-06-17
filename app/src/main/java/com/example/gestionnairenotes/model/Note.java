@@ -20,43 +20,26 @@ public class Note {
                 String couleur,
                 String date,
                 boolean favori) {
-
-        this.titre = titre;
+        this.titre   = titre;
         this.contenu = contenu;
         this.couleur = couleur;
-        this.date = date;
-        this.favori = favori;
+        this.date    = date;
+        this.favori  = favori;
     }
 
-    public int getId() {
-        return id;
-    }
+    // --- Getters ---
+    public int getId()       { return id; }
+    public String getTitre()   { return titre; }
+    public String getContenu() { return contenu; }
+    public String getCouleur() { return couleur; }
+    public String getDate()    { return date; }
+    public boolean isFavori()  { return favori; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitre() {
-        return titre;
-    }
-
-    public String getContenu() {
-        return contenu;
-    }
-
-    public String getCouleur() {
-        return couleur;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public boolean isFavori() {
-        return favori;
-    }
-
-    public void setFavori(boolean favori) {
-        this.favori = favori;
-    }
+    // --- Setters --- (ajoutés pour permettre la modification)
+    public void setId(int id)           { this.id = id; }
+    public void setTitre(String titre)     { this.titre = titre; }
+    public void setContenu(String contenu) { this.contenu = contenu; }
+    public void setCouleur(String couleur) { this.couleur = couleur; }
+    public void setDate(String date)       { this.date = date; }
+    public void setFavori(boolean favori)  { this.favori = favori; }
 }
