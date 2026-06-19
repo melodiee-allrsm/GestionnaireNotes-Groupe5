@@ -149,15 +149,15 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Simple clic → on ouvre l'écran d'édition en passant les données de la note via l'Intent.
      * On passe tout manuellement plutôt que de sérialiser l'objet pour rester simple.
      */
+
     @Override
     public void onNoteClick(Note note) {
         Intent intent = new Intent(this, EditNoteActivity.class);
-        intent.putExtra(EditNoteActivity.extra_note_id,     (long) note.getId());
-        intent.putExtra(EditNoteActivity.EXTRA_NOTE_TITRE,   note.getTitre());
-        intent.putExtra(EditNoteActivity.EXTRA_NOTE_CONTENU, note.getContenu());
-        intent.putExtra(EditNoteActivity.EXTRA_NOTE_COULEUR, note.getCouleur());
-        intent.putExtra(EditNoteActivity.EXTRA_NOTE_FAVORI,  note.isFavori());
-        startActivity(intent);
+
+        // On passe uniquement l'ID de la note
+        intent.putExtra(EditNoteActivity.extra_note_id, note.getId());
+
+        startActivityForResult(intent, REQUEST_EDIT_NOTE);
     }
 
     /**

@@ -4,9 +4,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView; // Import ajouté pour la CardView
 
 import com.example.gestionnairenotes.R;
 import com.example.gestionnairenotes.model.Note;
@@ -19,7 +20,7 @@ import java.util.Locale;
 public class CreateNoteActivity extends AppCompatActivity {
 
     private EditText etTitre, etContenu;
-    private LinearLayout layoutCreateNote;
+    private CardView layoutCreateNote; // Modifié : LinearLayout -> CardView
     private NoteRepository repository;
     private String couleurChoisie;
 
@@ -30,15 +31,19 @@ public class CreateNoteActivity extends AppCompatActivity {
 
         etTitre          = findViewById(R.id.etTitre);
         etContenu        = findViewById(R.id.etContenu);
-        layoutCreateNote = findViewById(R.id.layoutCreateNote);
+        layoutCreateNote = findViewById(R.id.layoutCreateNote); // Récupère le CardView du XML
         Button btnCreer  = findViewById(R.id.btnCreer);
 
         repository = new NoteRepository(this);
 
-        // Couleur reçue de Dev 4
+        // Couleur reçue du sélecteur de couleurs
         couleurChoisie = getIntent().getStringExtra("COULEUR");
-        if (couleurChoisie != null) {
-            layoutCreateNote.setBackgroundColor(Color.parseColor(couleurChoisie));
+        if (couleurChoisie != null && !couleurChoisie.isEmpty()) {
+            // Modifié : Utilisation de setCardBackgroundColor pour préserver les bords arrondis
+            layoutCreateNote.setCardBackgroundColor(Color.parseColor(couleurChoisie));
+        } else {
+            // Optionnel : Couleur par défaut (ex: Gris clair) si aucune couleur n'est reçue
+            layoutCreateNote.setCardBackgroundColor(Color.parseColor("#E0E0E0"));
         }
 
         btnCreer.setOnClickListener(v -> creerNote());

@@ -1,116 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Écran d'édition d'une note existante.
-     Le layout est simple : un formulaire scrollable avec les champs
-     titre, contenu, couleur, et un bouton pour sauvegarder. -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    android:padding="16dp">
+    android:background="#FFFFFF"
+    android:padding="16dp"> <androidx.cardview.widget.CardView
+    android:id="@+id/layoutEditNote"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/btnSauvegarderEdit"
+    android:layout_marginBottom="24dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    android:clipToOutline="true"> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/etTitreEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:hint="Titre"
+        android:textColor="#000000"
+        android:textColorHint="#66000000"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:background="@null"
+        android:paddingBottom="16dp" />
 
-        <!-- Titre de la note -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Titre"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <EditText
+        android:id="@+id/etContenuEdit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Contenu de la note..."
+        android:textColor="#000000"
+        android:textColorHint="#66000000"
+        android:textSize="16sp"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:background="@null" />
+</LinearLayout>
+</androidx.cardview.widget.CardView>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTitreEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSauvegarderEdit"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:text="Modifier"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="#000000" />
 
-        <!-- Contenu / corps de la note -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Contenu"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etContenuEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="5"
-                android:gravity="top"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Choix de la couleur de la carte. -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Couleur de la note"
-            android:textStyle="bold"
-            android:textColor="#333333"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-            <!-- Chaque bouton représente une couleur disponible.
-                 On stockera la valeur hex correspondante dans un tag. -->
-            <Button
-                android:id="@+id/btnCouleurBlanc"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:backgroundTint="#FFFFFF"
-                android:tag="#FFFFFF"
-                android:text=""
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
-            <Button
-                android:id="@+id/btnCouleurJaune"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="4dp"
-                android:backgroundTint="#FFF9C4"
-                android:tag="#FFF9C4"
-                android:text=""
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
-            <Button
-                android:id="@+id/btnCouleurVert"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:backgroundTint="#C8E6C9"
-                android:tag="#C8E6C9"
-                android:text=""
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
-            <Button
-                android:id="@+id/btnCouleurRose"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:backgroundTint="#F8BBD0"
-                android:tag="#F8BBD0"
-                android:text=""
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-        </LinearLayout>
-
-        <!-- Bouton principal pour enregistrer les modifications -->
-        <Button
-            android:id="@+id/btnSauvegarderEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Sauvegarder"
-            android:backgroundTint="#E53935"/>
-
-    </LinearLayout>
-</ScrollView>
+</RelativeLayout>
