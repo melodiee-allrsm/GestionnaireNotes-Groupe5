@@ -4,78 +4,102 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFFFFF">
 
-    <!-- Toolbar -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:title="Mes Notes"
-            app:titleTextColor="#FFFFFF" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Contenu principal -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="32dp">
 
-        <!-- Zone de recherche textuelle + bouton favoris -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="8dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutRecherche"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:hint="Rechercher par titre..."
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                android:background="@drawable/bg_search_bar"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <EditText
                     android:id="@+id/etRecherche"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="🔍  Rechercher"
                     android:inputType="text"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:textColorHint="#757575"
+                    android:importantForAutofill="no"
                     android:imeOptions="actionSearch"/>
-            </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
-            <!-- Bouton Favoris : quand il est actif, on n'affiche que les notes favorites -->
-            <Button
+            <ImageView
+                android:id="@+id/btnTri"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:padding="12dp"
+                android:background="@drawable/bg_btn_tri"
+                android:src="@android:drawable/ic_menu_sort_alphabetically"
+                app:tint="#000000"
+                android:contentDescription="Trier les notes" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnFavoris"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginStart="8dp"
-                android:text="★ Favoris"
-                android:backgroundTint="#BDBDBD"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                android:text="Favoris"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_btn_favoris" />
 
         </LinearLayout>
-        <!-- Liste des notes -->
+
+        <TextView
+            android:id="@+id/tvCompteurNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 notes"
+            android:textColor="#757575"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="10dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="80dp" />
+            android:paddingBottom="88dp" />
 
     </LinearLayout>
 
-    <!-- Palette de couleurs (cachée par défaut) -->
+    <TextView
+        android:id="@+id/tvAucuneNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Aucune notes"
+        android:textColor="#757575"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/layoutPalette"
         android:layout_width="wrap_content"
@@ -84,48 +108,41 @@
         android:gravity="center_horizontal"
         android:visibility="gone"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="18dp"
-        android:layout_marginBottom="80dp">
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="90dp">
 
         <View android:id="@+id/colorVert"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="44dp" android:layout_height="44dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle_color"
-            android:backgroundTint="@color/green" />
-
+            android:backgroundTint="#219653" />
         <View android:id="@+id/colorRouge"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="44dp" android:layout_height="44dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle_color"
-            android:backgroundTint="@color/red" />
-
+            android:backgroundTint="#EB5757" />
         <View android:id="@+id/colorBleu"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="44dp" android:layout_height="44dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle_color"
-            android:backgroundTint="@color/blue" />
-
+            android:backgroundTint="#2F80ED" />
         <View android:id="@+id/colorJaune"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="44dp" android:layout_height="44dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle_color"
-            android:backgroundTint="@color/yellow" />
-
+            android:backgroundTint="#F2C94C" />
         <View android:id="@+id/colorOrange"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="44dp" android:layout_height="44dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle_color"
-            android:backgroundTint="@color/orange" />
-
+            android:backgroundTint="#F2994A" />
         <View android:id="@+id/colorGris"
-            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_width="44dp" android:layout_height="44dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle_color"
-            android:backgroundTint="@color/gray" />
-
+            android:backgroundTint="#828282" />
     </LinearLayout>
 
-    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -134,6 +151,8 @@
         android:layout_margin="16dp"
         android:contentDescription="Nouvelle note"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:backgroundTint="?attr/colorPrimary" />
+        app:tint="#FFFFFF"
+        app:backgroundTint="#000000"
+        app:fabSize="normal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

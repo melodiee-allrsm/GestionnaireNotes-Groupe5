@@ -4,10 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView; // Import ajouté pour la CardView
+import androidx.cardview.widget.CardView;
 
 import com.example.gestionnairenotes.R;
 import com.example.gestionnairenotes.model.Note;
@@ -20,7 +21,7 @@ import java.util.Locale;
 public class CreateNoteActivity extends AppCompatActivity {
 
     private EditText etTitre, etContenu;
-    private CardView layoutCreateNote; // Modifié : LinearLayout -> CardView
+    private CardView layoutCreateNote;
     private NoteRepository repository;
     private String couleurChoisie;
 
@@ -31,18 +32,19 @@ public class CreateNoteActivity extends AppCompatActivity {
 
         etTitre          = findViewById(R.id.etTitre);
         etContenu        = findViewById(R.id.etContenu);
-        layoutCreateNote = findViewById(R.id.layoutCreateNote); // Récupère le CardView du XML
+        layoutCreateNote = findViewById(R.id.layoutCreateNote);
         Button btnCreer  = findViewById(R.id.btnCreer);
+        ImageView btnRetour = findViewById(R.id.btnRetourCreate);
+
+        // Gestion du clic de retour sans sauvegarder
+        btnRetour.setOnClickListener(v -> finish());
 
         repository = new NoteRepository(this);
 
-        // Couleur reçue du sélecteur de couleurs
         couleurChoisie = getIntent().getStringExtra("COULEUR");
         if (couleurChoisie != null && !couleurChoisie.isEmpty()) {
-            // Modifié : Utilisation de setCardBackgroundColor pour préserver les bords arrondis
             layoutCreateNote.setCardBackgroundColor(Color.parseColor(couleurChoisie));
         } else {
-            // Optionnel : Couleur par défaut (ex: Gris clair) si aucune couleur n'est reçue
             layoutCreateNote.setCardBackgroundColor(Color.parseColor("#E0E0E0"));
         }
 
@@ -53,7 +55,6 @@ public class CreateNoteActivity extends AppCompatActivity {
         String titre   = etTitre.getText().toString().trim();
         String contenu = etContenu.getText().toString().trim();
 
-        // Validation obligatoire
         if (titre.isEmpty()) {
             etTitre.setError("Le titre est obligatoire");
             etTitre.requestFocus();
@@ -65,17 +66,18 @@ public class CreateNoteActivity extends AppCompatActivity {
             return;
         }
 
-        // Date automatique
         String date = new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH)
                 .format(new Date());
 
-        // Créer et sauvegarder la note
         Note note = new Note(titre, contenu, couleurChoisie, date, false);
-        repository.insert(note);
 
-        Toast.makeText(this, "Note créée !", Toast.LENGTH_SHORT).show();
-
-        setResult(RESULT_OK);
-        finish();
+        new Thread(() -> {
+            repository.insert(note);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Note créée !", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            });
+        }).start();
     }
 }

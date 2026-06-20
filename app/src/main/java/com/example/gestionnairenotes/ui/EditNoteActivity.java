@@ -4,10 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView; // Import ajouté pour le CardView
+import androidx.cardview.widget.CardView;
 
 import com.example.gestionnairenotes.R;
 import com.example.gestionnairenotes.model.Note;
@@ -35,6 +36,10 @@ public class EditNoteActivity extends AppCompatActivity {
         etTitre = findViewById(R.id.etTitreEdit);
         etContenu = findViewById(R.id.etContenuEdit);
         Button btnModifier = findViewById(R.id.btnSauvegarderEdit);
+        ImageView btnRetour = findViewById(R.id.btnRetourEdit);
+
+        // Gestion du clic de retour sans modifier
+        btnRetour.setOnClickListener(v -> finish());
 
         int noteId = getIntent().getIntExtra(extra_note_id, -1);
 
@@ -63,10 +68,8 @@ public class EditNoteActivity extends AppCompatActivity {
                 etTitre.setText(note.getTitre());
                 etContenu.setText(note.getContenu());
 
-                // Récupération en tant que CardView pour préserver les angles arrondis
                 CardView layout = findViewById(R.id.layoutEditNote);
                 if (note.getCouleur() != null && !note.getCouleur().isEmpty()) {
-                    // Application de la couleur sur la carte directement
                     layout.setCardBackgroundColor(Color.parseColor(note.getCouleur()));
                 }
             });
@@ -81,13 +84,8 @@ public class EditNoteActivity extends AppCompatActivity {
             return;
         }
 
-        String titre = etTitre.getText() != null
-                ? etTitre.getText().toString().trim()
-                : "";
-
-        String contenu = etContenu.getText() != null
-                ? etContenu.getText().toString().trim()
-                : "";
+        String titre = etTitre.getText() != null ? etTitre.getText().toString().trim() : "";
+        String contenu = etContenu.getText() != null ? etContenu.getText().toString().trim() : "";
 
         if (titre.isEmpty()) {
             etTitre.setError("Le titre est obligatoire");
@@ -97,13 +95,11 @@ public class EditNoteActivity extends AppCompatActivity {
         noteActuelle.setTitre(titre);
         noteActuelle.setContenu(contenu);
         noteActuelle.setDate(
-                new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                        .format(new Date())
+                new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
         );
 
         new Thread(() -> {
             repository.update(noteActuelle);
-
             runOnUiThread(() -> {
                 setResult(RESULT_OK);
                 Toast.makeText(this, "Note modifiée avec succès", Toast.LENGTH_SHORT).show();

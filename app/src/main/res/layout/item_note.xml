@@ -5,27 +5,53 @@
     android:id="@+id/cardNote"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="18dp">
 
-        <TextView
-            android:id="@+id/tvTitre"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/ivFavori"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Titre"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#212121"/>
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/tvTitre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Note 1"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="01 Juin 2026"
+                android:textSize="13sp"
+                android:textColor="#E0E0E0"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvContenu"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/ivFavori"
@@ -33,30 +59,13 @@
             android:layout_height="28dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@android:drawable/btn_star_big_off"
+            android:background="@android:drawable/toast_frame"
+            android:backgroundTint="#000000"
+            android:padding="5dp"
+            android:src="@android:drawable/btn_star_big_on"
+            app:tint="#F2C94C"
+            android:visibility="gone"
             android:contentDescription="Favori" />
-
-        <TextView
-            android:id="@+id/tvContenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvTitre"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="Contenu..."
-            android:textSize="14sp"
-            android:textColor="#616161"/>
-
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvContenu"
-            android:layout_marginTop="6dp"
-            android:text="01/01/2026"
-            android:textSize="12sp"
-            android:textColor="#9E9E9E"/>
 
     </RelativeLayout>
 

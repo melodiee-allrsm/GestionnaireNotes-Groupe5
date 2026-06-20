@@ -1,13 +1,19 @@
 package com.example.gestionnairenotes.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,27 +22,30 @@ import com.example.gestionnairenotes.R;
 import com.example.gestionnairenotes.model.Note;
 import com.example.gestionnairenotes.service.NoteRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNoteClickListener {
 
-    // Codes de requête pour startActivityForResult
     private static final int REQUEST_CREATE_NOTE = 1;
     private static final int REQUEST_EDIT_NOTE   = 2;
 
     private NoteAdapter adapter;
     private NoteRepository repository;
 
-    private TextInputEditText etRecherche;
+    private EditText etRecherche;
     private Button btnFavoris;
+    private ImageView btnTri;
+    private TextView tvCompteurNotes;
+    private TextView tvAucuneNote; // Nouvelle variable ajoutée
+    private RecyclerView recyclerView; // Passé en variable d'instance pour y accéder partout
     private FloatingActionButton fab;
     private LinearLayout layoutPalette;
 
-    // On garde en mémoire si le filtre favoris est actif ou non
     private boolean filtreFavorisActif = false;
     private boolean isPaletteVisible = false;
+    private boolean triParTitre = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +54,19 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         repository = new NoteRepository(this);
 
-        // Initialisation du RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // L'adapter démarre avec une liste vide, on la remplit juste après
         adapter = new NoteAdapter(this, List.of(), this);
         recyclerView.setAdapter(adapter);
 
-        etRecherche = findViewById(R.id.etRecherche);
-        btnFavoris  = findViewById(R.id.btnFavoris);
-        fab         = findViewById(R.id.fab);
-        layoutPalette = findViewById(R.id.layoutPalette);
+        etRecherche     = findViewById(R.id.etRecherche);
+        btnFavoris      = findViewById(R.id.btnFavoris);
+        btnTri          = findViewById(R.id.btnTri);
+        tvCompteurNotes = findViewById(R.id.tvCompteurNotes);
+        tvAucuneNote    = findViewById(R.id.tvAucuneNote); // Initialisation de la vue
+        fab             = findViewById(R.id.fab);
+        layoutPalette   = findViewById(R.id.layoutPalette);
 
         // --- Recherche en temps réel ---
         etRecherche.addTextChangedListener(new TextWatcher() {
@@ -65,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString().trim();
-                chargerNotes(query);
+                chargerNotes(s.toString().trim());
             }
         });
 
@@ -77,8 +86,20 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
             chargerNotes(etRecherche.getText() != null ? etRecherche.getText().toString().trim() : "");
         });
 
-        // --- Palette de couleurs (cercles) ---
-        // Chaque cercle de couleur ouvre l'écran de création avec la couleur pré-sélectionnée
+        // --- Action Bouton de Tri ---
+        btnTri.setOnClickListener(v -> {
+            triParTitre = !triParTitre;
+            if (triParTitre) {
+                btnTri.setImageResource(android.R.drawable.ic_menu_sort_alphabetically);
+                Toast.makeText(this, "Tri par titre (A-Z)", Toast.LENGTH_SHORT).show();
+            } else {
+                btnTri.setImageResource(android.R.drawable.ic_menu_sort_by_size);
+                Toast.makeText(this, "Tri par date", Toast.LENGTH_SHORT).show();
+            }
+            chargerNotes(etRecherche.getText() != null ? etRecherche.getText().toString().trim() : "");
+        });
+
+        // --- Palette de couleurs ---
         findViewById(R.id.colorVert).setOnClickListener(v -> ouvrirCreation("#219653"));
         findViewById(R.id.colorRouge).setOnClickListener(v -> ouvrirCreation("#EB5757"));
         findViewById(R.id.colorBleu).setOnClickListener(v -> ouvrirCreation("#2F80ED"));
@@ -86,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
         findViewById(R.id.colorOrange).setOnClickListener(v -> ouvrirCreation("#F2994A"));
         findViewById(R.id.colorGris).setOnClickListener(v -> ouvrirCreation("#828282"));
 
-        // --- FAB : affiche ou cache la palette de couleurs ---
+        // --- FAB ---
         fab.setOnClickListener(v -> {
             if (isPaletteVisible) {
                 cacherPalette();
@@ -95,112 +116,110 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
             }
         });
 
-        // Chargement initial : toutes les notes
         chargerNotes("");
     }
 
-    /**
-     * Recharge la liste dans un thread séparé (Room bloque le main thread).
-     * Si le filtre favoris est actif, on ne montre que les notes favorites.
-     * Sinon, si une query est saisie, on filtre par titre ; sinon on affiche tout.
-     */
     private void chargerNotes(String query) {
         new Thread(() -> {
             List<Note> notes;
 
             if (filtreFavorisActif) {
-                // Mode favoris : on ignore la recherche textuelle pour simplifier
                 notes = repository.getFavoris();
             } else if (!query.isEmpty()) {
-                // Recherche en cours : on filtre par titre via la requête SQL LIKE
                 notes = repository.searchByTitle(query);
             } else {
-                // Aucun filtre : toutes les notes
                 notes = repository.getAll();
             }
 
-            // Mise à jour de l'UI toujours sur le main thread
+            if (triParTitre) {
+                Collections.sort(notes, (n1, n2) -> n1.getTitre().compareToIgnoreCase(n2.getTitre()));
+            } else {
+                Collections.sort(notes, (n1, n2) -> n2.getDate().compareTo(n1.getDate()));
+            }
+
             List<Note> finalNotes = notes;
-            runOnUiThread(() -> adapter.setNotes(finalNotes));
+            runOnUiThread(() -> {
+                // Gestion dynamique de l'affichage si la liste est vide
+                if (finalNotes == null || finalNotes.isEmpty()) {
+                    tvAucuneNote.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    tvAucuneNote.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+
+                adapter.setNotes(finalNotes);
+                mettreAJourCompteur(finalNotes.size());
+            });
         }).start();
     }
 
-    /**
-     * Met à jour l'apparence du bouton Favoris pour indiquer visuellement l'état actif/inactif.
-     * Actif = rouge + texte "★ Favoris ON", inactif = gris + texte "★ Favoris".
-     */
-    private void mettreAJourBoutonFavoris() {
-        if (filtreFavorisActif) {
-            btnFavoris.setText("★ Favoris ON");
-            btnFavoris.setBackgroundTintList(
-                    android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E53935"))
-            );
+    private void mettreAJourCompteur(int taille) {
+        if (taille <= 1) {
+            tvCompteurNotes.setText(taille + " note");
         } else {
-            btnFavoris.setText("★ Favoris");
-            btnFavoris.setBackgroundTintList(
-                    android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#BDBDBD"))
-            );
+            tvCompteurNotes.setText(taille + " notes");
         }
     }
 
-    // --- Implémentation de l'interface NoteAdapter.OnNoteClickListener ---
-
-    /**
-     * Simple clic → on ouvre l'écran d'édition en passant les données de la note via l'Intent.
-     * On passe tout manuellement plutôt que de sérialiser l'objet pour rester simple.
-     */
+    private void mettreAJourBoutonFavoris() {
+        if (filtreFavorisActif) {
+            btnFavoris.setText("★ Favoris");
+            btnFavoris.setTextColor(Color.parseColor("#E53935"));
+        } else {
+            btnFavoris.setText("Favoris");
+            btnFavoris.setTextColor(Color.parseColor("#000000"));
+        }
+    }
 
     @Override
     public void onNoteClick(Note note) {
         Intent intent = new Intent(this, EditNoteActivity.class);
-
-        // On passe uniquement l'ID de la note
         intent.putExtra(EditNoteActivity.extra_note_id, note.getId());
-
         startActivityForResult(intent, REQUEST_EDIT_NOTE);
     }
 
-    /**
-     * Double clic → on inverse l'état favori de la note et on recharge la liste.
-     * L'animation de l'étoile dans la carte se met à jour automatiquement via setNotes().
-     */
     @Override
     public void onNoteDoubleClick(Note note) {
-        note.setFavori(!note.isFavori()); // toggle
-
+        note.setFavori(!note.isFavori());
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
         new Thread(() -> {
-            repository.update(note); // on persist le changement en base
-            // Ensuite on recharge pour que l'étoile se mette à jour visuellement
-            chargerNotes(etRecherche.getText() != null ? etRecherche.getText().toString().trim() : "");
+            repository.update(note);
         }).start();
     }
 
-    /**
-     * onResume est appelé automatiquement quand on revient de EditNoteActivity ou CreateNoteActivity.
-     * C'est le bon endroit pour recharger la liste et afficher les modifications.
-     */
+    @Override
+    public void onNoteLongClick(Note note) {
+        new AlertDialog.Builder(this)
+                .setTitle("Supprimer la note")
+                .setMessage("Voulez-vous vraiment supprimer la note \"" + note.getTitre() + "\" ?")
+                .setPositiveButton("Supprimer", (dialog, which) -> {
+                    new Thread(() -> {
+                        repository.delete(note);
+                        chargerNotes(etRecherche.getText() != null ? etRecherche.getText().toString().trim() : "");
+                    }).start();
+                    Toast.makeText(this, "Note supprimée", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Annuler", null)
+                .show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         chargerNotes(etRecherche.getText() != null ? etRecherche.getText().toString().trim() : "");
     }
 
-    // --- Gestion du retour des activités ---
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Si une note a été créée ou modifiée, on recharge la liste
         if (resultCode == RESULT_OK) {
             chargerNotes(etRecherche.getText() != null ? etRecherche.getText().toString().trim() : "");
         }
     }
 
-    // --- Palette de couleurs ---
-
-    /**
-     * Affiche la palette de couleurs avec une animation de fondu.
-     */
     private void afficherPalette() {
         layoutPalette.setVisibility(View.VISIBLE);
         layoutPalette.setAlpha(0f);
@@ -208,9 +227,6 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
         isPaletteVisible = true;
     }
 
-    /**
-     * Cache la palette de couleurs avec une animation de fondu.
-     */
     private void cacherPalette() {
         layoutPalette.animate().alpha(0f).setDuration(300).withEndAction(() ->
                 layoutPalette.setVisibility(View.GONE)
@@ -218,9 +234,6 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.OnNot
         isPaletteVisible = false;
     }
 
-    /**
-     * Ouvre l'écran de création avec la couleur sélectionnée.
-     */
     private void ouvrirCreation(String couleur) {
         cacherPalette();
         Intent intent = new Intent(this, CreateNoteActivity.class);

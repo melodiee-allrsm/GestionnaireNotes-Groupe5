@@ -22,15 +22,14 @@ import java.util.List;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     public interface OnNoteClickListener {
-        void onNoteClick(Note note);           // clic simple → édition
-        void onNoteDoubleClick(Note note);     // double-clic → toggle favori
+        void onNoteClick(Note note);           // Clic simple -> Édition
+        void onNoteDoubleClick(Note note);     // Double clic -> Favori
+        void onNoteLongClick(Note note);       // Clic long -> Suppression
     }
 
     private List<Note> notes;
     private final Context context;
     private final OnNoteClickListener listener;
-
-    // Délai pour distinguer simple/double clic (ms)
     private static final long DOUBLE_CLICK_DELAY = 300;
 
     public NoteAdapter(Context context, List<Note> notes, OnNoteClickListener listener) {
@@ -54,21 +53,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         holder.tvContenu.setText(note.getContenu());
         holder.tvDate.setText(note.getDate());
 
-        // Couleur de fond dynamique selon la couleur de la note
         try {
             holder.cardNote.setCardBackgroundColor(Color.parseColor(note.getCouleur()));
         } catch (IllegalArgumentException e) {
             holder.cardNote.setCardBackgroundColor(Color.WHITE);
         }
 
-        // Icône favori
         if (note.isFavori()) {
-            holder.ivFavori.setImageResource(android.R.drawable.btn_star_big_on);
+            holder.ivFavori.setVisibility(View.VISIBLE);
         } else {
-            holder.ivFavori.setImageResource(android.R.drawable.btn_star_big_off);
+            holder.ivFavori.setVisibility(View.INVISIBLE);
         }
 
-        // Gestion du simple et double clic
+        // --- Gestion des Clics Simples et Doubles ---
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             private int clickCount = 0;
             private final Handler handler = new Handler(Looper.getMainLooper());
@@ -79,18 +76,24 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
                 if (clickCount == 1) {
                     handler.postDelayed(() -> {
                         if (clickCount == 1) {
-                            // Simple clic → navigation vers édition
-                            listener.onNoteClick(note);
+                            if (listener != null) listener.onNoteClick(note);
                         }
                         clickCount = 0;
                     }, DOUBLE_CLICK_DELAY);
                 } else if (clickCount == 2) {
                     handler.removeCallbacksAndMessages(null);
                     clickCount = 0;
-                    // Double clic → toggle favori
-                    listener.onNoteDoubleClick(note);
+                    if (listener != null) listener.onNoteDoubleClick(note);
                 }
             }
+        });
+
+        // --- Gestion du Clic Long pour Supprimer ---
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) {
+                listener.onNoteLongClick(note);
+            }
+            return true;
         });
     }
 
@@ -99,9 +102,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         return notes != null ? notes.size() : 0;
     }
 
-    /**
-     * Met à jour la liste affichée (recherche, filtre favoris, rechargement)
-     */
     public void setNotes(List<Note> newNotes) {
         this.notes = newNotes;
         notifyDataSetChanged();
@@ -119,6 +119,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             tvContenu = itemView.findViewById(R.id.tvContenu);
             tvDate    = itemView.findViewById(R.id.tvDate);
             ivFavori  = itemView.findViewById(R.id.ivFavori);
+
+            // Empêche la CardView de bloquer le clic long sur l'item complet
+            cardNote.setLongClickable(false);
         }
     }
 }
